@@ -1,15 +1,17 @@
 export function normalizeInputToDirectionsUrl(inputRaw: string) {
   const input = inputRaw.trim();
 
-  // If user pasted a full Google Maps URL, keep it but try to convert to a directions URL when possible.
-  // We’ll fall back to a generic "dir" destination query.
-  if (/^https?:\/\/(www\.)?google\.[^/]+\/maps/i.test(input) || /^https?:\/\/maps\.app\.goo\.gl/i.test(input)) {
-    // For short links (maps.app.goo.gl), we can’t expand without a server fetch.
-    // So we just use it as a destination query string.
+  // If user pasted a Google Maps URL (including short links), use it as a destination query.
+  // This avoids needing to expand/resolve the URL.
+  if (
+    /^https?:\/\/(www\.)?google\.[^/]+\/maps/i.test(input) ||
+    /^https?:\/\/maps\.app\.goo\.gl/i.test(input)
+  ) {
     return {
       destinationType: "gmaps" as const,
       destination: input,
-      directionsUrl: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(input)}&travelmode=driving`,
+      // Android-friendly directions URL
+      directionsUrl: `https://maps.google.com/?daddr=${encodeURIComponent(input)}`,
       label: "Google Maps link",
     };
   }
@@ -23,7 +25,7 @@ export function normalizeInputToDirectionsUrl(inputRaw: string) {
     return {
       destinationType: "coords" as const,
       destination: dest,
-      directionsUrl: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}&travelmode=driving`,
+      directionsUrl: `https://maps.google.com/?daddr=${encodeURIComponent(dest)}`,
       label: "Coordinates",
     };
   }
@@ -32,7 +34,7 @@ export function normalizeInputToDirectionsUrl(inputRaw: string) {
   return {
     destinationType: "address" as const,
     destination: input,
-    directionsUrl: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(input)}&travelmode=driving`,
+    directionsUrl: `https://maps.google.com/?daddr=${encodeURIComponent(input)}`,
     label: "Address / Place",
   };
 }
