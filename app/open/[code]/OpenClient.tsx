@@ -81,7 +81,7 @@ export default function OpenClient({ code }: { code: string }) {
               {new Date((data as any).created_at).toLocaleString()}
             </div>
 
-            <a
+            {/* <a
               href={(data as any).directionsUrl}
               style={{
                 display: "block",
@@ -96,10 +96,49 @@ export default function OpenClient({ code }: { code: string }) {
               }}
             >
               OPEN GOOGLE MAPS (DRIVE)
-            </a>
+            </a> */}
+            <button
+            onClick={() =>
+                openInMapsAndroid(
+                (data as any).destination,
+                (data as any).directionsUrl
+                )
+            }
+            style={{
+                display: "block",
+                width: "100%",
+                textAlign: "center",
+                marginTop: 16,
+                padding: "18px 16px",
+                borderRadius: 18,
+                fontSize: 22,
+                fontWeight: 900,
+                border: "2px solid #111",
+                cursor: "pointer",
+                background: "transparent",
+            }}
+            >
+            OPEN GOOGLE MAPS
+            </button>
           </>
         )}
       </div>
     </main>
   );
+}
+
+function openInMapsAndroid(destination: string, fallbackUrl: string) {
+  const navUrl = `google.navigation:q=${encodeURIComponent(destination)}&mode=d`;
+
+  // Try Android Google Maps navigation deep link
+  try {
+    window.location.href = navUrl;
+  } catch {
+    // ignore
+  }
+
+  // Fallback after a short delay (if Maps didn't catch it)
+  setTimeout(() => {
+    window.location.href = fallbackUrl;
+  }, 800);
 }
