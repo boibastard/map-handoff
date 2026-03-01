@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { normalizeInputToDirectionsUrl } from "@/lib/maps";
+import { unshortenUrl } from "@/lib/unshorten";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -26,8 +27,18 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, found: false });
   }
 
-  // Convert stored destination back into a directions url
-  const norm = normalizeInputToDirectionsUrl(row.destination);
+  // ✅ Expand Google Maps short links before building directionsUrl
+  let destination = String(row.destination || "").trim();
+
+  if (/^https?:\/\/maps\.app\.goo\.gl\//i.test(destination)) {
+    try {
+      destination = await unshortenUrl(destination);
+    } catch {
+      // If expansion fails, we keep the original short link.
+    }
+  }
+
+  const norm = normalizeInputToDirectionsUrl(destination);
 
   return NextResponse.json({
     ok: true,
@@ -35,7 +46,7 @@ export async function GET(req: Request) {
     code,
     created_at: row.created_at,
     label: row.label,
-    destination: row.destination,
+    destination,
     destination_type: row.destination_type,
     directionsUrl: norm.directionsUrl,
   });
