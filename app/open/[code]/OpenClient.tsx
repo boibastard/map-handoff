@@ -39,12 +39,12 @@ export default function OpenClient({ code }: { code: string }) {
 
   return (
     <main style={{ maxWidth: 900, margin: "0 auto", padding: 18, fontFamily: "system-ui" }}>
-      <h1 style={{ fontSize: 32, marginBottom: 6 }}>Tablet Receiver</h1>
+      <h1 style={{ fontSize: 32, marginBottom: 6 }}>Tablet Receiver (pair code): <b>{code}</b>
+        <p style={{ opacity: 0.85, margin: 0 }}>
+          
+        </p></h1>
 
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
-        <p style={{ opacity: 0.85, margin: 0 }}>
-          Pair code: <b>{code}</b>
-        </p>
 
         <div style={{ padding: "10px 12px", borderRadius: 12, border: "1px solid #eee", opacity: 0.8 }}>
           Last check: {new Date(lastFetch).toLocaleTimeString()}
@@ -68,7 +68,7 @@ export default function OpenClient({ code }: { code: string }) {
       {/* ✅ "Open manually" moved to the top + green active button look */}
       {found && (
         <a
-          href={(data as any).directionsUrl}
+          href={(data as any).destination}
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -107,7 +107,7 @@ export default function OpenClient({ code }: { code: string }) {
             <div style={{ fontSize: 16, opacity: 0.8 }}>Latest destination</div>
 
             <a
-              href={(data as any).directionsUrl}
+              href={(data as any).destination}
               target="_blank"
               rel="noopener noreferrer"
               title={(data as any).destination}
