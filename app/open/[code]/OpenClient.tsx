@@ -75,15 +75,22 @@ export default function OpenClient({ code }: { code: string }) {
           <>
             <div style={{ fontSize: 18, opacity: 0.8 }}>Latest destination</div>
             <div style={{ fontSize: 22, fontWeight: 800, marginTop: 6 }}>
-              {(data as any).destination}
+              <a
+            href={(data as any).destination}
+            target="_blank"
+            rel="noopener noreferrer">
+                {(data as any).destination}
+            </a>
             </div>
             <div style={{ opacity: 0.75, marginTop: 6 }}>
               {new Date((data as any).created_at).toLocaleString()}
             </div>
 
             {/* <a
-              href={(data as any).directionsUrl}
-              style={{
+            href={(data as any).destination}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
                 display: "block",
                 textAlign: "center",
                 marginTop: 16,
@@ -93,11 +100,12 @@ export default function OpenClient({ code }: { code: string }) {
                 fontSize: 22,
                 fontWeight: 900,
                 border: "2px solid #111",
-              }}
+                color: "black"
+            }}
             >
-              OPEN GOOGLE MAPS (DRIVE)
-            </a> */}
-            <button
+            OPEN GOOGLE MAPS NEW TAB
+            </a>  */}
+            {/* <button
             onClick={() =>
                 openInMapsAndroid(
                 (data as any).destination,
@@ -119,7 +127,7 @@ export default function OpenClient({ code }: { code: string }) {
             }}
             >
             OPEN GOOGLE MAPS
-            </button>
+            </button> */}
           </>
         )}
       </div>
