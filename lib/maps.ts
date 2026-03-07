@@ -11,7 +11,7 @@ export function normalizeInputToDirectionsUrl(inputRaw: string) {
       destinationType: "gmaps" as const,
       destination: input,
       // Android-friendly directions URL
-      directionsUrl: `https://maps.google.com/?daddr=${encodeURIComponent(input)}`,
+      directionsUrl: input,
       label: "Google Maps link",
     };
   }

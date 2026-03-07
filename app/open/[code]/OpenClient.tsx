@@ -148,6 +148,9 @@ export default function OpenClient({ code }: { code: string }) {
 
         {found && (
           <>
+          <pre style={{ fontSize: 12, overflowX: "auto" }}>
+            {JSON.stringify(data, null, 2)}
+            </pre> 
             <div style={{ fontSize: 16, opacity: 0.8 }}>Latest destination</div>
 
             <a
@@ -155,7 +158,7 @@ export default function OpenClient({ code }: { code: string }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={markOpened}
-              title={(data as any).destination_text}
+              title={(data as any).destination_text || (data as any).destination}
               style={{
                 display: "block",
                 marginTop: 10,
@@ -171,7 +174,7 @@ export default function OpenClient({ code }: { code: string }) {
                 textOverflow: "ellipsis",
               }}
             >
-              {(data as any).destination_text}
+              {(data as any).destination_text || (data as any).destination}
             </a>
 
             <div style={{ opacity: 0.75, marginTop: 8 }}>
