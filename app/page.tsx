@@ -12,9 +12,21 @@ function sanitizeCode(raw: string) {
     .slice(0, 12);
 }
 
+async function copyText(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    alert("Copied!");
+  } catch {
+    alert("Copy failed.");
+  }
+}
+
+
+
 export default function Home() {
   const [preset, setPreset] = useState<string>(PRESET_CODES[0]);
   const [custom, setCustom] = useState<string>("");
+  
 
   const code = useMemo(() => {
     const c = sanitizeCode(custom);
@@ -23,6 +35,16 @@ export default function Home() {
 
   const sendHref = `/send/${code}`;
   const openHref = `/open/${code}`; // this assumes you added /[code] -> redirect to /open/[code]
+  const shortcutBase =
+  typeof window !== "undefined"
+    ? `${window.location.origin}/shortcut?code=${code}&u=[Shortcut Input]`
+    : `/shortcut?code=${code}&u=[Shortcut Input]`;
+
+  const origin =
+  typeof window !== "undefined" ? window.location.origin : "";
+
+  const shortcutUrl = `${origin}/shortcut?code=${code}&u=[Shortcut Input]`;
+  const shortcutCode = code;
 
   return (
     <main
@@ -213,6 +235,95 @@ export default function Home() {
             <div style={{ marginTop: 8, fontSize: 13, opacity: 0.7 }}>
               The tablet code must match the Send page code.
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        style={{
+          border: "1px solid #ddd",
+          borderRadius: 18,
+          padding: 16,
+          marginTop: 14,
+        }}
+      >
+        <h2 style={{ marginTop: 0, fontSize: 20 }}>Apple Shortcut Setup</h2>
+        <p style={{ marginTop: 6, opacity: 0.8, lineHeight: 1.5 }}>
+          Use the Pair Code and URL below when building your iPhone Shortcut.
+        </p>
+
+        <div
+          style={{
+            marginTop: 14,
+            padding: 14,
+            borderRadius: 16,
+            border: "1px solid #eee",
+            background: "rgba(0,0,0,0.02)",
+          }}
+        >
+          <div style={{ fontSize: 14, opacity: 0.8 }}>Pair Code</div>
+          <div style={{ fontSize: 24, fontWeight: 950, marginTop: 4 }}>{shortcutCode}</div>
+
+          <button
+            onClick={() => copyText(shortcutCode)}
+            style={{
+              marginTop: 10,
+              padding: "10px 12px",
+              borderRadius: 12,
+              border: "1px solid #ccc",
+              fontWeight: 800,
+              cursor: "pointer",
+              background: "white",
+            }}
+          >
+            Copy Pair Code
+          </button>
+        </div>
+
+        <div
+          style={{
+            marginTop: 14,
+            border: "1px solid #eee",
+            borderRadius: 16,
+            padding: 14,
+          }}
+        >
+          <div style={{ fontWeight: 900 }}>Shortcut URL</div>
+
+          <div
+            title={shortcutUrl}
+            style={{
+              display: "block",
+              marginTop: 10,
+              padding: "12px 14px",
+              borderRadius: 14,
+              border: "1px solid #ddd",
+              fontWeight: 700,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {shortcutUrl}
+          </div>
+
+          <button
+            onClick={() => copyText(shortcutUrl)}
+            style={{
+              marginTop: 10,
+              padding: "10px 12px",
+              borderRadius: 12,
+              border: "1px solid #ccc",
+              fontWeight: 800,
+              cursor: "pointer",
+              background: "white",
+            }}
+          >
+            Copy Shortcut URL
+          </button>
+
+          <div style={{ marginTop: 8, fontSize: 13, opacity: 0.7, lineHeight: 1.5 }}>
+            In iOS Shortcuts, use the shared Google Maps link as the value for <b>u</b>.
           </div>
         </div>
       </section>
