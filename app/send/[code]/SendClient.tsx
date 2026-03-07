@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function SendClient({ code }: { code: string }) {
-  const [input, setInput] = useState("");
+  const searchParams = useSearchParams();
+  const prefill = searchParams.get("input") || "";
+
+  const [input, setInput] = useState(prefill);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [msg, setMsg] = useState("");
 
-  const primaryBg =  "#16a34a"; // green -> blue
-  const primaryBorder =  "#0f7a34";
+  useEffect(() => {
+    if (prefill) setInput(prefill);
+  }, [prefill]);
 
   async function onSend() {
     setStatus("sending");
@@ -25,7 +30,7 @@ export default function SendClient({ code }: { code: string }) {
       if (!res.ok) throw new Error(data?.error || "Failed to send");
 
       setStatus("sent");
-      setMsg("Sent! Now check the tablet.");
+      setMsg("Destination sent successfully.");
       setInput("");
     } catch (e: any) {
       setStatus("error");
@@ -34,41 +39,49 @@ export default function SendClient({ code }: { code: string }) {
   }
 
   return (
-    <main style={{ maxWidth: 720, margin: "0 auto", padding: 16 }}>
-      <h1>Send Navigation</h1>
-      <p>Pair code: <b>{code}</b></p>
+    <main className="app-shell">
+      <div className="app-card">
+        <div className="app-header">
+          <div className="app-check">↑</div>
 
-      <textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Enter address, coordinates, or Google Maps link"
-        rows={4}
-        style={{ width: "100%", marginTop: 10 }}
-      />
+          <div>
+            <div className="app-title">Send Destination</div>
+            <div className="app-subtitle">
+              Pair code: <b>{code}</b>
+            </div>
+          </div>
+        </div>
 
-      <button
-        onClick={onSend}
-        disabled={!input.trim() || status === "sending"}
-        // style={{ width: "100%", marginTop: 10 }}
-        style={{
-            display: "block",
-            marginTop: 14,
-            padding: "14px 16px",
-            borderRadius: 16,
-            textDecoration: "none",
-            fontSize: 18,
-            fontWeight: 950,
-            textAlign: "center",
-            border: `2px solid ${primaryBorder}`,
-            background: primaryBg,
-            color: "white",
-            boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
-          }}
-      >
-        {status === "sending" ? "Sending..." : "Send to Tablet"}
-      </button>
+        <label className="label">Destination</label>
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Paste a Google Maps link, address, or coordinates"
+          rows={1}
+          className="textarea"
+        />
 
-      {msg && <p style={{ marginTop: 10 }}>{msg}</p>}
+        <button
+          onClick={onSend}
+          disabled={!input.trim() || status === "sending"}
+          className={`button-link ${status === "sent" ? "button-green" : ""}`}
+          style={{ width: "100%", cursor: "pointer" }}
+        >
+          {status === "sending" ? "Sending..." : "Send to Tablet"}
+        </button>
+
+        
+
+        <a href={`/${code}`} className="destination-link mt-14 ">
+          Tablet Open Link: /{code}
+        </a>
+
+        {msg && (
+          <div className="panel" style={{ marginTop: 14 }}>
+            {msg}
+          </div>
+        )}
+      </div>
     </main>
   );
 }

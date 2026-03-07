@@ -7,98 +7,31 @@ export default function SentPage({
   const dest = searchParams.dest || "";
 
   return (
-    <main
-      style={{
-        maxWidth: 900,
-        margin: "0 auto",
-        padding: 18,
-        fontFamily: "system-ui",
-      }}
-    >
-      <div
-        style={{
-          border: "1px solid #ddd",
-          borderRadius: 18,
-          padding: 16,
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 999,
-              display: "grid",
-              placeItems: "center",
-              background: "#16a34a",
-              color: "white",
-              fontWeight: 900,
-            }}
-          >
-            ✓
-          </div>
+    <main className="app-shell">
+      <div className="app-card">
+        <div className="app-header">
+          <div className="app-check">✓</div>
 
           <div>
-            <div style={{ fontSize: 22, fontWeight: 950 }}>Destination Sent</div>
-            <div style={{ opacity: 0.8, marginTop: 2 }}>
+            <div className="app-title">Destination Sent</div>
+            <div className="app-subtitle">
               Pair code: <b>{code || "—"}</b>
             </div>
           </div>
         </div>
 
         {dest && (
-          <div
-            title={dest}
-            style={{
-              marginTop: 14,
-              padding: "12px 14px",
-              borderRadius: 14,
-              border: "1px solid #eee",
-              background: "rgba(0,0,0,0.02)",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              fontWeight: 800,
-            }}
-          >
+          <div className="destination-link" title={dest} style={{ background: "rgba(0,0,0,0.02)" }}>
             {dest}
           </div>
         )}
 
-        <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
-          <a
-            href={`/${encodeURIComponent(code)}`}
-            style={{
-              display: "block",
-              textAlign: "center",
-              padding: "14px 16px",
-              borderRadius: 16,
-              textDecoration: "none",
-              fontSize: 18,
-              fontWeight: 950,
-              border: "2px solid #0f7a34",
-              background: "#16a34a",
-              color: "white",
-              boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
-            }}
-          >
+        <div className="mt-14" style={{ display: "grid", gap: 10 }}>
+          <a href={`/${encodeURIComponent(code)}`} className="button-link button-green">
             Open Tablet Page
           </a>
 
-          <a
-            href={`/send/${encodeURIComponent(code)}`}
-            style={{
-              display: "block",
-              textAlign: "center",
-              padding: "12px 16px",
-              borderRadius: 16,
-              textDecoration: "none",
-              fontWeight: 900,
-              border: "1px solid #ddd",
-              color: "#111",
-              background: "white",
-            }}
-          >
+          <a href={`/send/${encodeURIComponent(code)}`} className="button-link">
             Send Another Destination
           </a>
         </div>
