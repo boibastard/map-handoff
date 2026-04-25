@@ -72,8 +72,14 @@ export default function OpenClient({ code }: { code: string }) {
 
   useEffect(() => {
     if (!safeMode && found && isNew) {
-      markOpened();
-      window.location.href = data.destination;
+            markOpened();
+            window.open(
+        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+          data.destination_text || data.destination
+        )}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
     }
   }, [safeMode, found, isNew, data]);
 
