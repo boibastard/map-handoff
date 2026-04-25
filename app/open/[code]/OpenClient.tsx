@@ -89,14 +89,14 @@ export default function OpenClient({ code }: { code: string }) {
 
         {found && (
           <a
-            href={`geo:0,0?q=${encodeURIComponent(
-              data.destination_text || data.destination
-            )}`}
-            onClick={markOpened}
-            className={`button-link ${isNew ? "button-green" : "button-blue"}`}
-          >
-            OPEN IN GOOGLE MAPS
-          </a>
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.destination_text || data.destination)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={markOpened}
+          className={`button-link ${isNew ? "button-green" : "button-blue"}`}
+        >
+          OPEN IN GOOGLE MAPS
+        </a>
         )}
 
         <div className="panel">
@@ -119,16 +119,15 @@ export default function OpenClient({ code }: { code: string }) {
                 Latest destination
               </div>
 
-              <a
-                href={`geo:0,0?q=${encodeURIComponent(
-                  data.destination_text || data.destination
-                )}`}
-                onClick={markOpened}
-                title={data.destination_text || data.destination}
-                className="destination-link"
-              >
-                {data.destination_text || data.destination}
-              </a>
+              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.destination_text || data.destination)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={markOpened}
+                  title={data.destination_text || data.destination}
+                  className="destination-link"
+                  >
+                  {data.destination_text || data.destination}
+                </a>
 
               <div className="timestamp">
                 {new Date(data.created_at).toLocaleString()}
