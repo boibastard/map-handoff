@@ -115,7 +115,7 @@ export default function OpenClient({ code }: { code: string }) {
 
         {found && (
           <a
-            href={data.destination}
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.destination_text || data.destination)}`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={markOpened}
