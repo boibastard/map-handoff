@@ -25,25 +25,15 @@ export default function OpenClient({ code }: { code: string }) {
   const [data, setData] = useState<LatestResponse | null>(null);
   const [lastFetch, setLastFetch] = useState<number>(Date.now());
   const [lastOpenedTs, setLastOpenedTs] = useState<string>("");
-  const [safeMode, setSafeMode] = useState(true);
 
   useEffect(() => {
     const saved = localStorage.getItem(storageKey(CODE)) || "";
     setLastOpenedTs(saved);
-
-    const savedSafeMode = localStorage.getItem("maps_handoff_safe_mode");
-    if (savedSafeMode !== null) {
-      setSafeMode(savedSafeMode === "true");
-    }
   }, [CODE]);
 
   useEffect(() => {
     if (lastOpenedTs) localStorage.setItem(storageKey(CODE), lastOpenedTs);
   }, [CODE, lastOpenedTs]);
-
-  useEffect(() => {
-    localStorage.setItem("maps_handoff_safe_mode", String(safeMode));
-  }, [safeMode]);
 
   async function fetchLatest() {
     const res = await fetch(`/api/latest?code=${encodeURIComponent(CODE)}`, {
@@ -69,19 +59,6 @@ export default function OpenClient({ code }: { code: string }) {
     if (!found) return;
     setLastOpenedTs(data.created_at);
   }
-
-  useEffect(() => {
-    if (!safeMode && found && isNew) {
-            markOpened();
-            window.open(
-        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-          data.destination_text || data.destination
-        )}`,
-        "_blank",
-        "noopener,noreferrer"
-      );
-    }
-  }, [safeMode, found, isNew, data]);
 
   return (
     <main className="app-shell">
@@ -110,20 +87,11 @@ export default function OpenClient({ code }: { code: string }) {
           </div>
         </div>
 
-        <label className="safe-mode-toggle">
-          <input
-            type="checkbox"
-            checked={safeMode}
-            onChange={(e) => setSafeMode(e.target.checked)}
-          />
-          Safe mode: open manually only
-        </label>
-
         {found && (
           <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.destination_text || data.destination)}`}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={`geo:0,0?q=${encodeURIComponent(
+              data.destination_text || data.destination
+            )}`}
             onClick={markOpened}
             className={`button-link ${isNew ? "button-green" : "button-blue"}`}
           >
@@ -152,9 +120,9 @@ export default function OpenClient({ code }: { code: string }) {
               </div>
 
               <a
-                href={data.destination}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`geo:0,0?q=${encodeURIComponent(
+                  data.destination_text || data.destination
+                )}`}
                 onClick={markOpened}
                 title={data.destination_text || data.destination}
                 className="destination-link"
