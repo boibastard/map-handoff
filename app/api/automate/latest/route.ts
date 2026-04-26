@@ -13,10 +13,22 @@ function extractNavigationQuery(input: string) {
 
     if (q) return decodeURIComponent(q);
 
+    const searchPathMatch = url.pathname.match(
+      /\/maps\/search\/(-?\d+(?:\.\d+)?),\s*\+?(-?\d+(?:\.\d+)?)/i
+    );
+
+    if (searchPathMatch) {
+      return `${searchPathMatch[1]},${searchPathMatch[2]}`;
+    }
+
     const atMatch = input.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-    if (atMatch) return `${atMatch[1]},${atMatch[2]}`;
+
+    if (atMatch) {
+      return `${atMatch[1]},${atMatch[2]}`;
+    }
 
     const placeMatch = url.pathname.match(/\/maps\/place\/([^/]+)/i);
+
     if (placeMatch?.[1]) {
       return decodeURIComponent(placeMatch[1].replace(/\+/g, " "));
     }
