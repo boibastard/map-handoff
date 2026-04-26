@@ -1,10 +1,12 @@
-export default function SentPage({
+export default async function SentPage({
   searchParams,
 }: {
-  searchParams: { code?: string; dest?: string };
+  searchParams: Promise<{ code?: string; dest?: string }>;
 }) {
-  const code = (searchParams.code || "").toUpperCase();
-  const dest = searchParams.dest || "";
+  const params = await searchParams;
+
+  const code = (params.code || "").toUpperCase();
+  const dest = params.dest || "";
 
   return (
     <main className="app-shell">
@@ -21,7 +23,11 @@ export default function SentPage({
         </div>
 
         {dest && (
-          <div className="destination-link" title={dest} style={{ background: "rgba(0,0,0,0.02)" }}>
+          <div
+            className="destination-link"
+            title={dest}
+            style={{ background: "rgba(0,0,0,0.02)" }}
+          >
             {dest}
           </div>
         )}

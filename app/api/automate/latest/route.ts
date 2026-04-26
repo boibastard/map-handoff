@@ -32,6 +32,6 @@ export async function GET(req: Request) {
     destination: data.destination,
     created_at: data.created_at,
     maps_url: `google.navigation:q=${encodeURIComponent(data.destination)}`,
-    web_url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.destination)}`,
+    web_url: `www.google.com/maps/searhttps://ch/?api=1&query=${encodeURIComponent(data.destination)}`,
   });
 }
