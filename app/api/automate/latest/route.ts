@@ -73,7 +73,7 @@ export async function GET(req: Request) {
     destination,
     navigation_query: navigationQuery,
     created_at: data.created_at,
-    maps_url: `google.navigation:q=${encodeURIComponent(navigationQuery)}`,
+    maps_url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(navigationQuery)}`,
     web_url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
       navigationQuery
     )}`,
