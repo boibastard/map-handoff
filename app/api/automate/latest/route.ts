@@ -7,9 +7,10 @@ function extractNavigationQuery(input: string) {
     const url = new URL(input);
 
     const q =
+      url.searchParams.get("daddr") ||
+      url.searchParams.get("destination") ||
       url.searchParams.get("q") ||
-      url.searchParams.get("query") ||
-      url.searchParams.get("destination");
+      url.searchParams.get("query");
 
     if (q) return decodeURIComponent(q);
 
