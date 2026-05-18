@@ -7,6 +7,9 @@ export default function SendClient({ code }: { code: string }) {
   const searchParams = useSearchParams();
   const prefill = searchParams.get("input") || "";
 
+  const cleanCode = code?.trim() || "";
+  const hasCode = cleanCode.length > 0;
+
   const [input, setInput] = useState(prefill);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [msg, setMsg] = useState("");
@@ -16,8 +19,21 @@ export default function SendClient({ code }: { code: string }) {
   }, [prefill]);
 
   async function onSend() {
-    setStatus("sending");
     setMsg("");
+
+
+
+    if(!hasCode) {
+      setStatus("error");
+      setMsg("Pair code required before sending.");
+      return;
+    }
+
+    if(!input.trim()) {
+      setStatus("error");
+      setMsg("Please enter destination first.");
+      return;
+    } 
 
     try {
       const res = await fetch("/api/push", {
@@ -65,7 +81,17 @@ export default function SendClient({ code }: { code: string }) {
           onClick={onSend}
           disabled={!input.trim() || status === "sending"}
           className={`button-link ${status === "sent" ? "button-green" : ""}`}
-          style={{ width: "100%", cursor: "pointer" }}
+          style={{
+            width: "100%",
+            cursor:
+              !hasCode || !input.trim() || status === "sending"
+                ? "not-allowed"
+                : "pointer",
+            opacity:
+              !hasCode || !input.trim() || status === "sending"
+                ? 0.6
+                : 1,
+          }}
         >
           {status === "sending" ? "Sending..." : "Send to Tablet"}
         </button>

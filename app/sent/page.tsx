@@ -1,3 +1,5 @@
+import CloseNowButton from "./CloseNowButton";
+
 export default async function SentPage({
   searchParams,
 }: {
@@ -33,13 +35,26 @@ export default async function SentPage({
         )}
 
         <div className="mt-14" style={{ display: "grid", gap: 10 }}>
-          <a href={`/${encodeURIComponent(code)}`} className="button-link button-green">
-            Open Tablet Page
-          </a>
 
-          <a href={`/send/${encodeURIComponent(code)}`} className="button-link">
-            Send Another Destination
-          </a>
+          {code && (
+            <>
+              <a
+                href={`/${encodeURIComponent(code)}`}
+                className="button-link button-green"
+              >
+                Open Tablet Page
+              </a>
+
+              <a
+                href={`/send/${encodeURIComponent(code)}`}
+                className="button-link"
+              >
+                Send Another Destination
+              </a>
+            </>
+          )}
+
+          <CloseNowButton />
         </div>
       </div>
     </main>

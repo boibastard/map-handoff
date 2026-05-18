@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-const PRESET_CODES = ["NAV1", "DTF1", "MAPS", "CHET", "TEST"];
+const PRESET_CODES = ["NAV1", "DTF1"];
 
 function sanitizeCode(raw: string) {
   // uppercase, keep letters/numbers only, limit length
@@ -21,12 +21,16 @@ async function copyText(text: string) {
   }
 }
 
-
-
 export default function Home() {
   const [preset, setPreset] = useState<string>(PRESET_CODES[0]);
   const [custom, setCustom] = useState<string>("");
-  
+
+  // Browser-only value. Starts empty so server/client first render match.
+  const [origin, setOrigin] = useState("");
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
 
   const code = useMemo(() => {
     const c = sanitizeCode(custom);
@@ -34,16 +38,14 @@ export default function Home() {
   }, [custom, preset]);
 
   const sendHref = `/send/${code}`;
-  const openHref = `/open/${code}`; // this assumes you added /[code] -> redirect to /open/[code]
-  const shortcutBase =
-  typeof window !== "undefined"
-    ? `${window.location.origin}/shortcut?code=${code}&u=[Shortcut Input]`
-    : `/shortcut?code=${code}&u=[Shortcut Input]`;
+  const openHref = `/open/${code}`;
 
-  const origin =
-  typeof window !== "undefined" ? window.location.origin : "";
+  // Relative path is safe for server render.
+  const shortcutPath = `/shortcut?code=${code}&u=[Shortcut Input]`;
 
-  const shortcutUrl = `${origin}/shortcut?code=${code}&u=[Shortcut Input]`;
+  // Full URL only appears after client mount.
+  const shortcutUrl = origin ? `${origin}${shortcutPath}` : shortcutPath;
+
   const shortcutCode = code;
 
   return (
@@ -180,7 +182,6 @@ export default function Home() {
         </div>
 
         <div style={{ display: "grid", gap: 12, marginTop: 14 }}>
-          {/* Send button */}
           <a
             href={sendHref}
             style={{
@@ -199,7 +200,6 @@ export default function Home() {
             Go to SEND page ({sendHref})
           </a>
 
-          {/* Open link helper */}
           <div
             style={{
               border: "1px solid #eee",
@@ -262,7 +262,9 @@ export default function Home() {
           }}
         >
           <div style={{ fontSize: 14, opacity: 0.8 }}>Pair Code</div>
-          <div style={{ fontSize: 24, fontWeight: 950, marginTop: 4 }}>{shortcutCode}</div>
+          <div style={{ fontSize: 24, fontWeight: 950, marginTop: 4 }}>
+            {shortcutCode}
+          </div>
 
           <button
             onClick={() => copyText(shortcutCode)}
