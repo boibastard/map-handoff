@@ -4,6 +4,7 @@ import { normalizeInputToDirectionsUrl } from "@/lib/maps";
 
 export async function POST(req: Request) {
   try {
+    
     const body = await req.json();
     const code = String(body.code || "").trim().toUpperCase();
     const input = String(body.input || "").trim();
@@ -29,7 +30,9 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ok: true, code, ...norm });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : "Server error";
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

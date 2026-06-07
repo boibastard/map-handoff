@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function SendClient({ code }: { code: string }) {
   const searchParams = useSearchParams();
@@ -10,13 +10,13 @@ export default function SendClient({ code }: { code: string }) {
   const cleanCode = code?.trim() || "";
   const hasCode = cleanCode.length > 0;
 
-  const [input, setInput] = useState(prefill);
+  const [input, setInput] = useState(prefill || "");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [msg, setMsg] = useState("");
 
-  useEffect(() => {
-    if (prefill) setInput(prefill);
-  }, [prefill]);
+  // useEffect(() => {
+  //   if (prefill) setInput(prefill);
+  // }, [prefill]);
 
   async function onSend() {
     setMsg("");
@@ -48,9 +48,10 @@ export default function SendClient({ code }: { code: string }) {
       setStatus("sent");
       setMsg("Destination sent successfully.");
       setInput("");
-    } catch (e: any) {
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Something went wrong.";
       setStatus("error");
-      setMsg(e?.message ?? "Error");
+      setMsg(message ?? "Error");
     }
   }
 

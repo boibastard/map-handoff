@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type LatestResponse =
   | { ok: true; found: false }
@@ -23,33 +23,64 @@ export default function OpenClient({ code }: { code: string }) {
   const CODE = useMemo(() => code.toUpperCase(), [code]);
 
   const [data, setData] = useState<LatestResponse | null>(null);
-  const [lastFetch, setLastFetch] = useState<number>(Date.now());
+  const [lastFetch, setLastFetch] = useState<number>(0);
   const [lastOpenedTs, setLastOpenedTs] = useState<string>("");
 
   useEffect(() => {
-    const saved = localStorage.getItem(storageKey(CODE)) || "";
-    setLastOpenedTs(saved);
+    const timer = window.setTimeout(() => {
+      const saved = localStorage.getItem(storageKey(CODE)) || "";
+      setLastOpenedTs(saved);
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [CODE]);
 
   useEffect(() => {
     if (lastOpenedTs) localStorage.setItem(storageKey(CODE), lastOpenedTs);
   }, [CODE, lastOpenedTs]);
 
-  async function fetchLatest() {
-    const res = await fetch(`/api/latest?code=${encodeURIComponent(CODE)}`, {
-      cache: "no-store",
-    });
+  // async function fetchLatest() {
+  //   const res = await fetch(`/api/latest?code=${encodeURIComponent(CODE)}`, {
+  //     cache: "no-store",
+  //   });
 
-    const json = (await res.json()) as LatestResponse;
-    setData(json);
-    setLastFetch(Date.now());
-  }
+  //   const json = (await res.json()) as LatestResponse;
+  //   setData(json);
+  //   setLastFetch(Date.now());
+  // }
+  const fetchLatest = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/latest?code=${encodeURIComponent(CODE)}`, {
+        cache: "no-store",
+      });
 
-  useEffect(() => {
-    fetchLatest();
-    const t = setInterval(fetchLatest, 2500);
-    return () => clearInterval(t);
+      const json = (await res.json()) as LatestResponse;
+
+      setData(json);
+      setLastFetch(Date.now());
+    } catch {
+      setLastFetch(Date.now());
+    }
   }, [CODE]);
+
+  // useEffect(() => {
+  //   fetchLatest();
+  //   const t = setInterval(fetchLatest, 2500);
+  //   return () => clearInterval(t);
+  // }, [CODE]);
+  useEffect(() => {
+    const run = () => {
+      void fetchLatest();
+    };
+
+    const firstRun = window.setTimeout(run, 0);
+    const interval = window.setInterval(run, 2500);
+
+    return () => {
+      window.clearTimeout(firstRun);
+      window.clearInterval(interval);
+    };
+  }, [fetchLatest]);
 
   const found = !!data && "found" in data && data.found === true;
   const currentTs = found ? data.created_at : "";

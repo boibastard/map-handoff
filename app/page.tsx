@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 const PRESET_CODES = ["NAV1", "DTF1"];
 
@@ -26,11 +26,11 @@ export default function Home() {
   const [custom, setCustom] = useState<string>("");
 
   // Browser-only value. Starts empty so server/client first render match.
-  const [origin, setOrigin] = useState("");
+  //const [origin, setOrigin] = useState("");
 
-  useEffect(() => {
-    setOrigin(window.location.origin);
-  }, []);
+  //useEffect(() => {
+  //  setOrigin(window.location.origin);
+  //}, []);
 
   const code = useMemo(() => {
     const c = sanitizeCode(custom);
@@ -44,7 +44,7 @@ export default function Home() {
   const shortcutPath = `/shortcut?code=${code}&u=[Shortcut Input]`;
 
   // Full URL only appears after client mount.
-  const shortcutUrl = origin ? `${origin}${shortcutPath}` : shortcutPath;
+  const shortcutUrl = shortcutPath;
 
   const shortcutCode = code;
 
