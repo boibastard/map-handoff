@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chets Map Hand Off",
-  description: "Send destinations between devices",
+  title: "Map Handoff | Send Google Maps Destinations Between Devices",
+  description: "Send addresses, coordinates, or Google Maps links from your phone to your tablet using a simple pair code.",
 };
 
 export default function RootLayout({
@@ -24,7 +24,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  //const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  const gaId = "G-J6JYPKCY30";
   return (
     <html lang="en">
       <body
