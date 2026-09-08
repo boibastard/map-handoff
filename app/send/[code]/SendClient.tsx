@@ -18,6 +18,46 @@ export default function SendClient({ code }: { code: string }) {
   //   if (prefill) setInput(prefill);
   // }, [prefill]);
 
+  function getCurrentLocation(): Promise<{
+    originLat: number | null;
+    originLng: number | null;
+    originAccuracy: number | null;
+  }> {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        resolve({
+          originLat: null,
+          originLng: null,
+          originAccuracy: null,
+        });
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            originLat: position.coords.latitude,
+            originLng: position.coords.longitude,
+            originAccuracy: position.coords.accuracy,
+          });
+        },
+        () => {
+          // Still allow the destination to send if GPS permission fails.
+          resolve({
+            originLat: null,
+            originLng: null,
+            originAccuracy: null,
+          });
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 30000,
+        }
+      );
+    });
+  }
+
   async function onSend() {
     setMsg("");
 
@@ -36,22 +76,41 @@ export default function SendClient({ code }: { code: string }) {
     } 
 
     try {
+      setStatus("sending");
+
+      const location = await getCurrentLocation();
+
       const res = await fetch("/api/push", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, input }),
+        body: JSON.stringify({
+          code,
+          input,
+          ...location,
+        }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Failed to send");
+
+      if (!res.ok) {
+        throw new Error(data?.error || "Failed to send");
+      }
 
       setStatus("sent");
-      setMsg("Destination sent successfully.");
+
+      if (location.originLat !== null) {
+        setMsg("Destination sent successfully with origin location.");
+      } else {
+        setMsg("Destination sent, but origin location was unavailable.");
+      }
+
       setInput("");
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Something went wrong.";
+      const message =
+        e instanceof Error ? e.message : "Something went wrong.";
+
       setStatus("error");
-      setMsg(message ?? "Error");
+      setMsg(message);
     }
   }
 

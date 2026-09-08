@@ -8,6 +8,9 @@ export async function POST(req: Request) {
     const body = await req.json();
     const code = String(body.code || "").trim().toUpperCase();
     const input = String(body.input || "").trim();
+    const originLat = Number(body.originLat);
+    const originLng = Number(body.originLng);
+    const originAccuracy = Number(body.originAccuracy);
 
     if (!code || code.length < 2) {
       return NextResponse.json({ error: "Missing code" }, { status: 400 });
@@ -23,6 +26,12 @@ export async function POST(req: Request) {
       label: norm.label,
       destination: norm.destination,
       destination_type: norm.destinationType,
+
+      origin_lat: Number.isFinite(originLat) ? originLat : null,
+      origin_lng: Number.isFinite(originLng) ? originLng : null,
+      origin_accuracy: Number.isFinite(originAccuracy)
+        ? originAccuracy
+        : null,
     });
 
     if (error) {
