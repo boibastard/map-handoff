@@ -332,6 +332,7 @@ export default function Home() {
 
       <footer style={{ marginTop: 16, opacity: 0.7, fontSize: 13 }}>
         Pro tip: Add the Open page to your tablet Home Screen for one-tap access.
+        <p style={{ marginTop: 8 }}>Khakan Dev Agent test</p>
       </footer>
     </main>
   );
